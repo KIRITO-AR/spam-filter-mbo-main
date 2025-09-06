@@ -2,290 +2,245 @@
 
 ## Introduction
 
-The Spam Detection System is a comprehensive tool designed to train and deploy models for classifying emails and SMS messages as spam or not spam. The system provides a user-friendly interface built with Tkinter for both training models and classifying messages. It supports multiple models, including a lite model, a legacy model, and an optimized model using the Monarch Butterfly Optimization algorithm 🦋.
+The Spam Detection System is a comprehensive machine learning tool designed to classify emails and SMS messages as spam or legitimate (ham). This system implements multiple classification models, including a novel approach using the Monarch Butterfly Optimization (MBO) algorithm 🦋 to optimize hyperparameters for superior performance.
+
+The system provides both a training interface and a classification interface through user-friendly GUIs built with Tkinter, making it accessible for both technical and non-technical users.
+
+## Key Features
+
+- **Multiple Models**: Implements three different approaches - Lite, Legacy, and MBO-optimized models
+- **Advanced Optimization**: Uses the nature-inspired Monarch Butterfly Optimization algorithm to find optimal hyperparameters
+- **Visual Analytics**: Generates comprehensive visualizations including dataset insights, word clouds, and performance metrics
+- **User-Friendly Interface**: GUI applications for both training and classification
+- **Performance Tracking**: Saves model metrics and provides detailed performance reports
 
 ## Project Structure
 
-The project is organized as follows:
-
 ```
-spam_detection/
-├── app.py
-├── train.py
-├── training/
-│   ├── train_model_lite.py
-│   ├── train_model_legacy.py
-│   └── train_model_mbo.py
+spam-filter-mbo-main/
+├── app.py                 # Main classification application
+├── train.py               # Main training application
+├── requirements.txt       # Python dependencies
+├── models.md              # Model comparison documentation
+├── README.md              # Project documentation
 ├── data/
-│   └── spam.csv
+│   └── spam.csv           # Training dataset
 ├── models/
-│   ├── model.pkl
-│   ├── vectorizer.pkl
-│   ├── model_optimized.pkl
-│   ├── vectorizer_optimized.pkl
-│   └── metrics.txt
+│   ├── model.pkl          # Legacy model
+│   ├── vectorizer.pkl     # Legacy vectorizer
+│   ├── model_optimized.pkl# Optimized model
+│   ├── vectorizer_optimized.pkl # Optimized vectorizer
+│   └── metrics.txt        # Model performance metrics
 ├── graphs/
-│   ├── dataset_insights.png
-│   ├── wordclouds.png
-│   └── performance_metrics.png
-└── README.md
+│   ├── dataset_insights.png   # Data distribution visualizations
+│   ├── wordclouds.png         # Word cloud visualizations
+│   └── performance_metrics.png# Model performance charts
+├── training/
+│   ├── train_model_lite.py    # Lite model training script
+│   ├── train_model_legacy.py  # Legacy model training script
+│   └── train_model_mbo.py     # MBO-optimized model training script
+└── .gitignore
 ```
-
-- **`app.py`**: The main application script for the Spam Classifier UI.
-- **`train.py`**: The main application script for the Model Trainer UI.
-- **training/**: Directory containing scripts for training different models.
-    - **`train_model_lite.py`**: Script for training the lite model.
-    - **`train_model_legacy.py`**: Script for training the legacy model.
-    - **`train_model_mbo.py`**: Script for training the model with the Monarch Butterfly Optimization algorithm 🦋.
-- **data/**: Directory containing the dataset (`spam.csv`).
-- **models/**: Directory where trained models and vectorizers are saved.
-- **graphs/**: Directory where generated visualizations are saved.
-- **README.md**: Project documentation.
 
 ## Getting Started
 
 ### Prerequisites
 
-- **Python 3.6 or higher**
-- **pip** package installer
+- Python 3.6 or higher
+- pip package installer
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd spam-filter-mbo-main
+   ```
+
+2. Install required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Download NLTK data (done automatically but can be manual):
+   ```python
+   import nltk
+   nltk.download('punkt')
+   nltk.download('wordnet')
+   nltk.download('stopwords')
+   ```
 
 ### Required Python Packages
 
-Install the required packages using the following command:
-
-```bash
-pip install -r requirements.txt
-```
-
-*Note: The requirements.txt file should contain all the necessary packages, including but not limited to:*
-
-- tkinter
-- nltk
-- scikit-learn
-- pandas
-- numpy
-- matplotlib
-- seaborn
-- wordcloud
-- pillow (PIL)
-
-### NLTK Data
-
-The application uses the Natural Language Toolkit (NLTK) library, which requires certain datasets. These datasets are downloaded automatically when you run the scripts, but you can also download them manually:
-
-```python
-import nltk
-nltk.download('punkt')
-nltk.download('wordnet')
-nltk.download('stopwords')
-```
+The system requires the following key packages:
+- tkinter (for GUI)
+- nltk (natural language processing)
+- scikit-learn (machine learning)
+- pandas (data manipulation)
+- numpy (numerical computing)
+- matplotlib & seaborn (data visualization)
+- wordcloud (text visualization)
+- pillow (PIL - image handling)
+- torch (PyTorch - for GPU acceleration in MBO)
 
 ## Dataset
 
-The dataset used for training is [`spam.csv`](data/spam.csv), which should be placed in the data directory. This dataset contains labeled messages indicating whether they are spam or ham (not spam).
+The system uses the `spam.csv` dataset containing labeled messages. The dataset has two columns:
+- `v1`: Label (spam or ham)
+- `v2`: Text message content
+
+The dataset is automatically preprocessed to remove unnecessary columns and renamed for clarity.
 
 ## Application Overview
 
 ### Spam Classifier UI (app.py)
 
-The `app.py` script launches a GUI application that allows users to input a message and classify it as spam or not spam using the selected model.
+A GUI application for classifying messages as spam or ham using trained models.
 
 #### Features
-
-- **Model Selection**: Users can choose between the optimized model or the legacy model.
-- **Message Input**: Provides a text area for users to input the message to be classified.
-- **Prediction**: Classifies the input message and displays whether it is spam or not spam.
-- **Visual Feedback**: Displays the prediction result with color-coded text (red for spam, green for not spam).
+- Model selection between optimized and legacy models
+- Text input area for message classification
+- Color-coded results (red for spam, green for ham)
+- Real-time classification
 
 #### How to Run
-
 ```bash
 python app.py
 ```
 
-#### Code Structure
-
-- **SpamClassifierUI Class**: Contains the GUI setup and the logic for running the classification.
-    - **__init__**: Initializes the GUI and loads the models.
-    - **setup_ui**: Sets up the UI components.
-    - **transform_text_legacy**: Preprocesses text for the legacy model (stemming).
-    - **transform_text_optimized**: Preprocesses text for the optimized model (lemmatization).
-    - **predict**: Handles the prediction logic.
-
 ### Model Trainer UI (train.py)
 
-The `train.py` script launches a GUI application that allows users to train models using different algorithms and visualize the training results.
+A comprehensive GUI application for training different models and visualizing results.
 
 #### Features
-
-- **Model Selection**: Users can choose to train the lite model, the legacy model, or the Monarch Butterfly Optimization (MBO) model 🦋.
-- **Training Controls**: Provides a button to start training the selected model.
-- **Progress Indication**: Shows a progress bar during training.
-- **Visualizations**: Displays dataset insights, word clouds, and performance metrics after training.
-- **Logs**: Provides a log tab to display training logs and error messages.
+- Selection between Lite, Legacy, and MBO models
+- MBO parameter configuration (butterfly count, migration ratio, etc.)
+- GPU acceleration support for MBO
+- Progress indication during training
+- Visualization of dataset insights, word clouds, and performance metrics
+- Detailed training logs
 
 #### How to Run
-
 ```bash
 python train.py
 ```
 
-#### Code Structure
+## Training Models
 
-- **SpamDetectionUI Class**: Contains the GUI setup and logic for training models.
-    - **__init__**: Initializes the GUI and sets up tabs.
-    - **setup_training_tab**: Sets up the training controls and model selection.
-    - **setup_visualization_tab**: Sets up the visualizations display area.
-    - **setup_log_tab**: Sets up the log display area.
-    - **start_training**: Begins the training process in a separate thread.
-    - **train_model**: Handles model training logic based on the selected model.
-    - **update_displays**: Updates the GUI with new visualizations and metrics after training.
-    - **display_image**: Helper function to display images in the GUI.
-    - **update_log**: Updates the log text area with training logs.
+### 1. Lite Model
+- Fast training with pre-configured hyperparameters
+- Uses lemmatization for text preprocessing
+- Ensemble of SVC, MultinomialNB, and ExtraTreesClassifier with fixed weights
+- Ideal for quick prototyping and testing
 
-## Training Scripts
+### 2. Legacy Model
+- Traditional approach with basic ensemble
+- Uses Porter Stemming for text preprocessing
+- Simpler hyperparameters compared to optimized models
+- Balanced between speed and performance
 
-### `train_model_lite.py`
+### 3. Monarch Butterfly Optimization (MBO) Model 🦋
+- Advanced optimization using nature-inspired algorithm
+- Optimizes 7 key parameters simultaneously:
+  - SVC parameters (C, gamma)
+  - MultinomialNB alpha
+  - Number of trees in ExtraTreesClassifier
+  - Ensemble weights for all three classifiers
+- Population-based search with configurable parameters:
+  - Butterfly count (default: 20)
+  - Migration ratio (default: 0.85)
+  - Maximum iterations (default: 30)
+- Supports GPU acceleration via PyTorch
+- Most computationally intensive but typically highest performing
 
+## The Monarch Butterfly Optimization Algorithm 🦋
 
+The MBO algorithm mimics the migration behavior of monarch butterflies to find optimal solutions in a search space. In this implementation:
 
-The lite model training script focuses on a streamlined approach with optimized parameters and enhanced feature extraction.
-
-#### Features
-
-- **Text Preprocessing**: Uses lemmatization and removes stop words and punctuation.
-- **Feature Extraction**: Adds additional features such as text length, word count, unique word count, uppercase count, and special character count.
-- **Model Creation**: Builds an ensemble model using SVC, MultinomialNB, and ExtraTreesClassifier with predefined optimized hyperparameters.
-- **Visualization**: Generates graphs for dataset insights, word clouds, and performance metrics.
-- **Metrics Saving**: Saves accuracy, precision, and F1 score to a metrics file.
-
-#### How to Run Individually
-
-```bash
-python training/train_model_lite.py
-```
-
-### `train_model_legacy.py`
-
-
-
-The legacy model training script retains the original model logic without optimization but updates the structure and adds visualizations.
-
-#### Features
-
-- **Text Preprocessing**: Uses stemming and removes stop words and punctuation.
-- **Model Creation**: Builds an ensemble model using SVC, MultinomialNB, and ExtraTreesClassifier with original parameters.
-- **Visualization**: Generates graphs for dataset insights, word clouds, and performance metrics.
-- **Metrics Saving**: Saves accuracy and precision to a metrics file.
-
-#### How to Run Individually
-
-```bash
-python training/train_model_legacy.py
-```
-
-### `train_model_mbo.py`
-
-
-
-This script trains a model using the Monarch Butterfly Optimization algorithm 🦋 to optimize hyperparameters.
-
-#### Features
-
-- **Monarch Butterfly Optimization (MBO)**: Implements the MBO algorithm to find optimal hyperparameters for the model.
-- **Parameter Optimization**: Optimizes parameters for SVC, MultinomialNB, and ExtraTreesClassifier as well as ensemble weights.
-- **Model Creation**: Builds an ensemble model using the optimized parameters.
-- **Visualization**: Generates graphs for dataset insights, word clouds, and performance metrics.
-- **Metrics Saving**: Saves accuracy, precision, and F1 score to a metrics file.
-
-#### How to Run Individually
-
-```bash
-python training/train_model_mbo.py
-```
-
-#### The Monarch Butterfly Optimization Algorithm
-
-The MBO algorithm is a nature-inspired optimization technique that mimics the migration behavior of monarch butterflies 🦋. It is used in this project to find the optimal hyperparameters for the ensemble model.
-
-**Key Components:**
-
-- **Population Initialization**: Randomly initializes a population of possible solutions (butterflies).
-- **Migration Operator**: Adjusts solutions based on the migration behavior, encouraging exploration and exploitation of the search space.
-- **Fitness Function**: Evaluates solutions based on cross-validation scores.
-
-## Dependencies and Libraries
-
-- **tkinter**: For building the GUI applications.
-- **nltk**: For natural language processing tasks.
-- **scikit-learn**: For machine learning algorithms and tools.
-- **pandas**: For data manipulation.
-- **numpy**: For numerical computations.
-- **matplotlib and seaborn**: For data visualization.
-- **wordcloud**: For generating word cloud images.
-- **Pillow (PIL)**: For image handling in the GUI.
-- **pickle**: For saving and loading model objects.
+1. **Population Initialization**: Creates a population of "butterflies" with random parameter values
+2. **Fitness Evaluation**: Each butterfly's fitness is evaluated using cross-validation scores
+3. **Migration Process**: Butterflies move toward better solutions based on migration operators
+4. **Iteration**: The process repeats for a specified number of iterations
+5. **Optimal Solution**: The best parameters found are used to train the final model
 
 ## Visualizations
 
-The system generates several visualizations to help understand the dataset and the model performance.
+The system generates three key visualizations after training:
 
-- **Dataset Insights** (`dataset_insights.png`): Histograms and box plots showing message length distribution, class distribution, and word count by class.
+1. **Dataset Insights** (`graphs/dataset_insights.png`)
+   - Message length distribution by class
+   - Class distribution (spam vs ham)
+   - Word count comparison
 
-![Dataset Insights](graphs/dataset_insights.png)
+2. **Word Clouds** (`graphs/wordclouds.png`)
+   - Visual representation of most frequent words in spam messages
+   - Visual representation of most frequent words in legitimate messages
 
-- **Word Clouds** (`wordclouds.png`): Visual representations of the most frequent words in spam and ham messages.
+3. **Performance Metrics** (`graphs/performance_metrics.png`)
+   - Confusion matrix
+   - Classification report heatmap
+   - Top feature importances
 
-![Word Clouds](graphs/wordclouds.png)
+## Model Performance
 
-- **Performance Metrics** (`performance_metrics.png`): Confusion matrix, classification report, and top important features.
+Performance metrics are automatically saved to `models/metrics.txt` after training:
+- Accuracy
+- Precision
+- F1 Score
 
-![Performance Metrics](graphs/performance_metrics.png)
+## Usage Workflow
 
-## Logs and Metrics
-
-- **Logs**: The training scripts and applications output logs to help track the training process and any issues.
-- **Metrics**: After training, key performance metrics are saved to metrics.txt in the models directory.
-    
-Example content of metrics.txt:
-```
-Accuracy: 0.9825
-Precision: 0.9700
-F1: 0.9750
-```
+1. **Prepare Dataset**: Ensure `spam.csv` is in the `data/` directory
+2. **Train Models**: Run `python train.py` to launch the trainer GUI
+3. **Select Model**: Choose between Lite, Legacy, or MBO models
+4. **Configure Parameters**: Adjust MBO parameters if using the MBO model
+5. **Start Training**: Click "Train Model" and monitor progress in the logs
+6. **Review Results**: Check visualizations and metrics in their respective tabs
+7. **Classify Messages**: Run `python app.py` to launch the classifier and test messages
 
 ## Error Handling
 
-- The applications include error handling to manage exceptions such as missing models or datasets.
-- Informative messages are displayed to the user via message boxes or log outputs.
+The applications include comprehensive error handling for:
+- Missing models or datasets
+- Invalid parameter configurations
+- NLTK data download issues
+- GPU availability and CUDA errors
+- File I/O problems
 
-## How to Train and Test Models
-
-1. **Prepare the Dataset**: Ensure `spam.csv` is placed in the data directory.
-2. **Run the Trainer GUI**: Execute `python train.py` to launch the training application.
-3. **Select the Model**: Choose the model you wish to train (Lite, Legacy, MBO) from the GUI.
-4. **Train the Model**: Click the "Train Model" button to start training. Progress and logs will be displayed.
-5. **View Visualizations**: After training, navigate to the "Visualizations" tab to see the generated graphs.
-6. **Check Metrics**: Metrics will be displayed in the "Model Metrics" section and saved to metrics.txt.
-7. **Test the Classifier**: Run python app.py to launch the spam classifier application and test message classification.
-
-## Additional Notes
-
-- **Directory Creation**: The applications will create required directories such as models and graphs if they do not exist.
-- **Model Artifacts**: Trained models and vectorizers are saved in the models directory for reuse.
-- **Data Encodings**: The dataset is read with encoding='latin-1' due to special characters.
-- **Stratification**: Data splitting uses stratification to maintain class distribution across training and test sets.
+Informative error messages are displayed to guide users in resolving issues.
 
 ## Troubleshooting
 
-- **Missing NLTK Data**: If you encounter errors related to NLTK data, ensure that the necessary data packages (`punkt`, `wordnet`, `stopwords`) are downloaded.
-- **ModuleNotFoundError**: Ensure all required Python packages are installed.
-- **GUI Not Displaying Correctly**: Check your Python version and ensure that tkinter is properly installed.
+### Common Issues
 
-## Contact and Support
+1. **NLTK Data Missing**: Run the NLTK download commands manually
+2. **Module Not Found**: Ensure all requirements are installed with `pip install -r requirements.txt`
+3. **CUDA Errors**: If GPU acceleration fails, the system automatically falls back to CPU
+4. **GUI Display Issues**: Check Python and tkinter installation
 
-For questions or support, please contact the project maintainers.
+### Performance Tips
+
+1. **For Quick Testing**: Use the Lite model
+2. **For Best Performance**: Use the MBO model with higher butterfly counts and iterations
+3. **For GPU Acceleration**: Ensure PyTorch with CUDA support is installed
+4. **Memory Management**: The MBO model can be memory-intensive with large populations
+
+## Contributing
+
+Contributions to improve the spam detection system are welcome. Areas for improvement include:
+- Additional optimization algorithms
+- More sophisticated text preprocessing
+- Enhanced visualization capabilities
+- Performance optimizations
+
+## License
+
+This project is provided for educational and research purposes.
+
+## Contact
+
+For questions or support, please open an issue in the repository.
 
 ---
 
-This documentation provides a detailed overview of the Spam Detection System, including instructions on how to set up, train, and use the models. It covers the structure of the project, the functionalities of each component, and guidance on how to resolve common issues.
+*This documentation provides a comprehensive overview of the Spam Detection System with Monarch Butterfly Optimization, including setup instructions, usage guidelines, and technical details about the implementation.*
